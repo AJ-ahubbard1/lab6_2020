@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-
+#include <unistd.h>
 using namespace std;
 
 void binarysearch(int arr[], int n, int x);
@@ -12,11 +12,13 @@ void doublebubblesort(int arr[], int n);
 void selectionsort(int arr[], int n);
 void doubleselectionsort(int arr[], int n);
 void insertionsort(int arr[], int n);       
-void animatedbubblesort(int arr[], int n);
-void animateddoublebubblesort(int arr[], int n);
-void animatedselectionsort(int arr[], int n);
-void animateddoubleselectionsort(int arr[], int n)
-void animatedinsertionsort(int arr[], int n);       
+void animatedbubblesort(int arr[], int n, int s);
+void animateddoublebubblesort(int arr[], int n, int s);
+void animatedselectionsort(int arr[], int n, int s);
+void animateddoubleselectionsort(int arr[], int n, int s);
+void animatedinsertionsort(int arr[], int n, int s);       
+
+#define DEFAULT_SPEED 100000
 
 int main()
 {
@@ -27,14 +29,13 @@ int main()
     cout << "sort the array, then find a value\n\n";
 
     srand(time(NULL));
-
-    int n;
+    int n = 50;
+    int max = 100;
+    int min = 1;
     cout << "how many numbers in array?: ";
     cin >> n; cout << endl;
     int arr[n];
 
-    int max;
-    int min;
     cout << "\nWhat's the maximum number in the array?: ";
     cin >> max; cout << endl;
     cout << "\nWhat's the minimum number in the array?: ";
@@ -51,47 +52,88 @@ int main()
     int sortchoice;
     cout << "Which sort would you like to use?\n";
     cout << "[1]bubble sort, [2]double bubble sort, [3]selection sort, [4]double selection sort, [5]insertion sort\n";
-    cout << "ANIMATED SORTS!!!";
-    cout << "[6]bubble sort, [7]double bubble sort, [8]selection sort, [9]double selection sort, [10]insertion sort\n";
     cin >> sortchoice;  cout << endl;
-    while(sortchoice > 10 || sortchoice < 1)
+    while(sortchoice > 5 || sortchoice < 1)
     {   
         cout << "Not a valid selection!\n";
         cout << "Which sort would you like to use?\n";
         cout << "[1]bubble sort, [2]double bubble sort, [3]selection sort, [4]double selection sort, [5]insertion sort\n";
-        cout << "ANIMATED SORTS!!!";
-        cout << "[6]bubble sort, [7]double bubble sort, [8]selection sort, [9]double selection sort, [10]insertion sort\n";
         cin >> sortchoice;  cout << endl;
     }
-    int start_time = time(0);
-    switch(sortchoice)
+    char yn;
+    cout << "Would you like the sorts to be animated(y/n)? ";
+    cin >> yn;
+    while(yn != 'y' && yn != 'n')
     {
-        case 1:
-            cout << "You've chosen...BUBBLE SORT\n";
-            bubblesort(arr, n);     
-            break;
-        case 2:
-            cout << "You've chosen...DOUBLE BUBBLE SORT\n";
-            doublebubblesort(arr, n);     
-            break;
-        case 3:
-            cout << "You've chosen...SELECTION SORT\n";
-            selectionsort(arr, n);
-            break;
-        case 4:
-            cout << "You've chosen...DOUBLE SELECTION SORT\n";
-            doubleselectionsort(arr, n);
-            break;
-        case 5:
-            cout << "You've chosen...INSERTION SORT\n";
-            insertionsort(arr, n);
-            break;
-        case 6:
-            cout << "You've chosen...ANIMATED BUBBLE SORT\n";
-            bubblesort(arr, n);     
-            break;
-    } 
-    cout << "Sorting array, please wait..." << endl;
+        cout << "Not a valid selection!\nWould you like the sorts to be animated(y/n)? ";
+        cin >> yn;
+    }
+    int start_time = time(0);
+    if(yn == 'n')
+    {    
+        switch(sortchoice)
+        {
+            case 1:
+                cout << "You've chosen...BUBBLE SORT\n";
+                bubblesort(arr, n);     
+                break;
+            case 2:
+                cout << "You've chosen...DOUBLE BUBBLE SORT\n";
+                doublebubblesort(arr, n);     
+                break;
+            case 3:
+                cout << "You've chosen...SELECTION SORT\n";
+                selectionsort(arr, n);
+                break;
+            case 4:
+                cout << "You've chosen...DOUBLE SELECTION SORT\n";
+                doubleselectionsort(arr, n);
+                break;
+            case 5:
+                cout << "You've chosen...INSERTION SORT\n";
+                insertionsort(arr, n);
+                break;
+        } 
+    }
+    if(yn == 'y')
+    {    
+         
+        int SPEED;
+        cout << "What speed";
+        cout << "[1]Turtle, [2]Horse, [3]Cheetah\n";
+        cin >> SPEED;  cout << endl;
+        
+        switch(SPEED)
+        {   
+            case 1:
+                SPEED = DEFAULT_SPEED*3;
+                break;
+            case 2:
+                SPEED = DEFAULT_SPEED;
+                break;
+            case 3:
+                SPEED = DEFAULT_SPEED/3;
+                break;
+        }
+        switch(sortchoice)
+        {
+            case 1:
+                animatedbubblesort(arr, n, SPEED);     
+                break;
+            case 2:
+                animateddoublebubblesort(arr, n, SPEED);     
+                break;
+            case 3:
+                animatedselectionsort(arr, n, SPEED);
+                break;
+            case 4:
+                animateddoubleselectionsort(arr, n, SPEED);
+               break;
+            case 5:
+                animatedinsertionsort(arr, n, SPEED);
+                break;
+        } 
+    }
     bool ordered = true;
     for (int i = 0; i < n-1; i++)
     {
@@ -108,71 +150,50 @@ int main()
     int stop_time = time(0);
     int total_time = stop_time -start_time;
     cout << "Time to sort: " << total_time << endl;
-    
- 
-    char print;
-    do
-    {
-        cout << "\nDo you want a printout of the sorted array?(y/n)  ";
-        cin >> print;
-    }
-    while(print != 'y' && print != 'n');
-    if(print == 'y')
-    {
-        for (int i = 0; i < n; i++)
-        {
-            if (i % 10 == 0)
-                cout << endl;
-            cout << arr[i] << "\t";
-
-        }
-    }
-    cout << endl;
 
     return 0;
 }
 
 void binarysearch(int arr[], int n, int x)      //n=size, x = search value
 {
-       int start = 0;
-       int end = n-1;
-       int mid;
-       int x;
-       int count = 1;
-       cout << "What value are we searching for?: ";
-       cin >> x; cout << endl;
-       int index = -1;
-       while(start <= end)
-       {
-       mid = (start + end)/2;
-       cout << "search attempt: " << count << endl;
-       cout << "start: " << start << " ";
-       cout << "mid: " << mid << " ";
-       cout << "end: " << end << endl;
-
-       if (arr[mid] == x)
-       {
-       index = mid;
-       break;
-       }
-       if (x < arr[mid])
-       {
-       end = mid - 1;
-       cout << "LOWER!\n";
-       }
-       if (x > arr[mid])
-       {
-       start = mid +1;
-       cout << "HIGHER!\n";
-       }
-       count++;
-       }
-       if (index == -1)
-       {
-       cout << "value was not found:(\n";
-       }
-       else
-       cout << x << " was found at index " << index << endl;
+    int start = 0;
+    int end = n-1;
+    int mid;
+    int count = 1;
+    cout << "What value are we searching for?: ";
+    cin >> x; cout << endl;
+    int index = -1;
+    while(start <= end)
+    {
+        mid = (start + end)/2;
+        cout << "search attempt: " << count << endl;
+        cout << "start: " << start << " ";
+        cout << "mid: " << mid << " ";
+        cout << "end: " << end << endl;
+    
+        if (arr[mid] == x)
+        {
+            index = mid;
+            break;
+        }
+        if (x < arr[mid])
+        {
+            end = mid - 1;
+            cout << "LOWER!\n";
+        }
+        if (x > arr[mid])
+        {
+            start = mid +1;
+            cout << "HIGHER!\n";
+        }
+        count++;
+    }
+    if (index == -1)
+    {
+        cout << "value was not found:(\n";
+    }
+    else
+        cout << x << " was found at index " << index << endl;
 }                  
 
 void bubblesort(int arr[], int n)
@@ -340,12 +361,14 @@ void insertionsort(int arr[], int n)
 }
 
 
-void animatedbubblesort(int arr[], int n)
+void animatedbubblesort(int arr[], int n, int s)
 {
-    system("clear");
+    int SPEED = s;
     bool noswap;                             
     do
     {    
+        system("clear");
+        cout << "\n\n\n";
         noswap = true;
         for (int j = 0; j < n-1; j++)           
         {
@@ -362,15 +385,18 @@ void animatedbubblesort(int arr[], int n)
             }
             cout << endl;
         }
+        usleep(SPEED);
     }while(!noswap);
-    usleep(100000);
 }
 
-void animateddoublebubblesort(int arr[], int n)
+void animateddoublebubblesort(int arr[], int n, int s)
 {
+    int SPEED = s;
     bool noswap;                             
     do
-    {    
+    {   
+        system("clear"); 
+        cout << "\n\n\n";
         noswap = true;
         for (int j = 0; j < n-1; j++)           
         {
@@ -388,23 +414,33 @@ void animateddoublebubblesort(int arr[], int n)
                 arr[n-2-j] = temp;
                 noswap = false;  
             }
+            for(int i = 0; i < arr[j]; i++)
+            {
+                cout << "*";
+            }
+            cout << endl;
         }
+        usleep(SPEED);
     }while(!noswap);
 }
 
-void animatedselectionsort(int arr[], int n)
+void animatedselectionsort(int arr[], int n, int s)
 {
+    int SPEED = s;
     int lowswaps = 0;                      
     int lowkeeps = 0;
     for (int i = 0; i < n; i++)
     {
+        system("clear");
+        cout << "\n\n\n";
         int lowestNumberIndex = i;  
         for (int j = i + 1; j < n; j++)
         {
             if (arr[j] < arr[lowestNumberIndex])
             {
                 lowestNumberIndex = j;
-            }
+            } 
+
         }
         if (lowestNumberIndex != i)
         {
@@ -415,14 +451,24 @@ void animatedselectionsort(int arr[], int n)
         }
         else
             lowkeeps++;   
+        for(int j = 0; j < n; j++)
+        {
+            for(int k = 0; k < arr[j]; k++)
+            {
+                cout << "*";
+            }
+            cout << endl;
+        }
+        usleep(SPEED);
     }
     cout << "low swaps: " << lowswaps << endl << "low keeps: " << lowkeeps << endl;
     cout << "total(swaps + keeps) = " << lowswaps + lowkeeps  << endl;
 }
 
 
-void animateddoubleselectionsort(int arr[], int n)
+void animateddoubleselectionsort(int arr[], int n, int s)
 {
+    int SPEED = s;
     int lowswaps = 0;                       
     int hiswaps = 0;
     int lowkeeps = 0;
@@ -431,6 +477,8 @@ void animateddoubleselectionsort(int arr[], int n)
     bool swappedhi = true;
     for (int i = 0; i < n/2; i++)
     {
+        system("clear");
+        cout << "\n\n\n";
         int lowestNumberIndex = i;  
         int highestNumberIndex = n-1-i;
         for (int j = i ; j < n-i; j++)
@@ -490,13 +538,23 @@ void animateddoubleselectionsort(int arr[], int n)
         {
             hikeeps++;
         }
+        for(int j = 0; j < n; j++)
+        {
+            for(int k = 0; k < arr[j]; k++)
+            {
+                cout << "*";
+            }
+            cout << endl;
+        }
+        usleep(SPEED);        
     }
     cout << "low swaps: " << lowswaps << endl << "hi swaps: " << hiswaps << endl;
     cout << "low keeps: " << lowkeeps << endl << "hi keeps: " << hikeeps << endl;
     cout << "total(swaps + keeps) = " << lowswaps + hiswaps + lowkeeps + hikeeps << endl;
 }
-void animatedinsertionsort(int arr[], int n)       
+void animatedinsertionsort(int arr[], int n, int s)       
 {
+    int SPEED = s;
     int i, j, tmp;
     for (i = 1; i < n; i++)
     {
@@ -507,6 +565,17 @@ void animatedinsertionsort(int arr[], int n)
             arr[j] = arr[j - 1];
             arr[j - 1] = tmp;
             j--;
+            system("clear");
+            cout << "\n\n\n";
+            for(int x = 0; x < n; x++)
+            {    
+                for(int y = 0; y < arr[x]; y++)
+                {
+                    cout << "*";
+                }
+                cout << endl;
+            }
+            usleep(SPEED);   
         }
     }
 }
